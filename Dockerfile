@@ -19,8 +19,10 @@ RUN apk update && \
       libldap \
       libgcrypt \
       python \
-      dbus \
-      dbus-glib \
+      avahi \
+      avahi-tools \
+      #dbus \
+      #dbus-glib \
       py-dbus \
       linux-pam \
       cracklib \
@@ -40,7 +42,7 @@ RUN apk update && \
       cracklib-dev \
       acl-dev \
       db-dev \
-      dbus-dev \
+      #dbus-dev \
       libevent-dev && \
     ln -s -f /bin/true /usr/bin/chfn && \
     cd /tmp && \
@@ -51,7 +53,7 @@ RUN apk update && \
       --prefix=/usr \
       --localstatedir=/var/state \
       --sysconfdir=/etc \
-      --with-dbus-sysconf-dir=/etc/dbus-1/system.d/ \
+      #--with-dbus-sysconf-dir=/etc/dbus-1/system.d/ \
       --with-init-style=debian-sysv \
       --sbindir=/usr/bin \
       --enable-quota \
@@ -67,6 +69,14 @@ RUN apk update && \
     rm -rf netatalk-${netatalk_version} netatalk-${netatalk_version}.tar.gz && \
     apk del .build-deps
 
+# Disable dbus for avahi
+RUN sed -i 's/#enable-dbus=yes/enable-dbus=no/g' /etc/avahi/avahi-daemon.conf
+
+# Set avahi hostname to "TimeMachine"
+RUN sed -i 's/#host-name=foo/host-name=TimeMachine/g' /etc/avahi/avahi-daemon.conf
+
+# Clean package cache
+RUN rm -fr /var/cache/apk/*
 
 RUN mkdir -p /timemachine && \
     mkdir -p /var/log/supervisor
@@ -75,12 +85,14 @@ RUN mkdir -p /timemachine && \
 RUN touch /var/log/afpd.log
 
 ADD entrypoint.sh /entrypoint.sh
+ADD avahi/afpd.service /etc/avahi/services/afpd.service
+ADD avahi/nsswitch.conf /etc/nsswitch.conf
 ADD start_netatalk.sh /start_netatalk.sh
 ADD bin/add-account /usr/bin/add-account
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-EXPOSE 548 636
+EXPOSE 548 636 9 5353/udp
 
-VOLUME ["/timemachine"]
+VOLUME ["/timemachine", "/var/state/netatalk"]
 
 CMD ["/entrypoint.sh"]

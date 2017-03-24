@@ -18,6 +18,7 @@ chown -R $1:root $3
 [${1}]
     path = ${3}
     time machine = yes
+    spotlight = no
     valid users = ${1}" >> /etc/afp.conf
 
 if [[ $# -eq 4 ]]; then

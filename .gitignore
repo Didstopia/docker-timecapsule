@@ -1,6 +1,9 @@
 #######################
 ## Windows gitignore ##
 #######################
+# Debugging data
+DATA
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
