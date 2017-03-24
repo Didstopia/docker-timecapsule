@@ -12,17 +12,21 @@ if [ ! -e /.initialized_afp ]; then
     mimic model = TimeCapsule6,106
     log file = /var/log/afpd.log
     log level = default:warn
-    uam list = uams_guest.so
+    spotlight = yes
+    #uam list = uams_guest.so
+    #guest account = guest
+    ea = ad
     zeroconf = yes" >> /etc/afp.conf
 
-    echo "[Time Machine]
-    path = /timemachine/shared
-    time machine = yes
-    spotlight = no
-    rwlist = nobody
-    " >> /etc/afp.conf
+#    echo "
+#[Time Machine]
+#    path = /timemachine/shared
+#    time machine = yes
+#    spotlight = no
+#    rwlist = nobody
+#    " >> /etc/afp.conf
 
-    mkdir -p /timemachine/shared
+#    mkdir -p /timemachine/shared
 
     touch /.initialized_afp
 fi

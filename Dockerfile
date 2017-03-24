@@ -1,16 +1,11 @@
 FROM alpine:latest
-MAINTAINER Óscar de Arriba <odarriba@gmail.com>
 
-##################
-##   BUILDING   ##
-##################
+MAINTAINER Pauli Jokela <pauli.jokela@didstopia.com>
 
-# Versions to use
-ENV netatalk_version 3.1.11
+ENV NETATALK_VERSION 3.1.11
 
 WORKDIR /
 
-# Prerequisites
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache \
@@ -21,8 +16,6 @@ RUN apk update && \
       python \
       avahi \
       avahi-tools \
-      #dbus \
-      #dbus-glib \
       py-dbus \
       linux-pam \
       cracklib \
@@ -42,18 +35,16 @@ RUN apk update && \
       cracklib-dev \
       acl-dev \
       db-dev \
-      #dbus-dev \
       libevent-dev && \
     ln -s -f /bin/true /usr/bin/chfn && \
     cd /tmp && \
-    curl -o netatalk-${netatalk_version}.tar.gz -L https://downloads.sourceforge.net/project/netatalk/netatalk/${netatalk_version}/netatalk-${netatalk_version}.tar.gz && \
-    tar xvf netatalk-${netatalk_version}.tar.gz && \
-    cd netatalk-${netatalk_version} && \
+    curl -o netatalk-${NETATALK_VERSION}.tar.gz -L https://downloads.sourceforge.net/project/netatalk/netatalk/${NETATALK_VERSION}/netatalk-${NETATALK_VERSION}.tar.gz && \
+    tar xvf netatalk-${NETATALK_VERSION}.tar.gz && \
+    cd netatalk-${NETATALK_VERSION} && \
     CFLAGS="-Wno-unused-result -O2" ./configure \
       --prefix=/usr \
       --localstatedir=/var/state \
       --sysconfdir=/etc \
-      #--with-dbus-sysconf-dir=/etc/dbus-1/system.d/ \
       --with-init-style=debian-sysv \
       --sbindir=/usr/bin \
       --enable-quota \
@@ -73,7 +64,7 @@ RUN apk update && \
 RUN sed -i 's/#enable-dbus=yes/enable-dbus=no/g' /etc/avahi/avahi-daemon.conf
 
 # Set avahi hostname to "TimeMachine"
-RUN sed -i 's/#host-name=foo/host-name=TimeMachine/g' /etc/avahi/avahi-daemon.conf
+#RUN sed -i 's/#host-name=foo/host-name=TimeMachine/g' /etc/avahi/avahi-daemon.conf
 
 # Clean package cache
 RUN rm -fr /var/cache/apk/*
