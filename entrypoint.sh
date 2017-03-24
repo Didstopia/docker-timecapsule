@@ -9,7 +9,7 @@ if [ ! -e /.initialized_afp ]; then
     rm /etc/afp.conf
 
     echo "[Global]
-    mimic model = TimeCapsule6,106
+    mimic model = TimeCapsule8,119
     log file = /var/log/afpd.log
     log level = default:warn
     spotlight = yes
