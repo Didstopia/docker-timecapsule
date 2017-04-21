@@ -34,8 +34,12 @@ fi
 ## TODO: If we really want to be able to add users, those also need to be able to persist, right?
 ##       Maybe when adding a user (in the binary itself), take a copy afp.conf and copy it to a volume,
 ##       then when starting back up, check if that file exists, and if so, use it instead?
-if [ ! -e /.initialized_user ] && [ ! -z $AFP_LOGIN ] && [ ! -z $AFP_PASSWORD ] && [ ! -z $AFP_NAME ]; then
-    add-account $AFP_LOGIN $AFP_PASSWORD $AFP_NAME $AFP_SIZE_LIMIT
+if [ ! -e /.initialized_user ] && [ ! -z $AFP_LOGIN ] && [ ! -z $AFP_PASSWORD ]; then
+    add-account $AFP_LOGIN $AFP_PASSWORD /timemachine/$AFP_LOGIN $AFP_SIZE_LIMIT
+    ## TODO: This isn't a good fix, but I personally need a second account, so it'll have to do
+    if [ ! -z $AFP_LOGIN2 ] && [ ! -z $AFP_PASSWORD2 ]; then
+        add-account $AFP_LOGIN2 $AFP_PASSWORD2 /timemachine/$AFP_LOGIN2 $AFP_SIZE_LIMIT
+    fi
     touch /.initialized_user
 fi
 
